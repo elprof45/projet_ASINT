@@ -1,0 +1,281 @@
+<!doctype html>
+
+<html class="dark" lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Bovann Challenge - Les Habitants</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#256af4",
+              "background-light": "#f5f6f8",
+              "background-dark": "#101622",
+            },
+            fontFamily: {
+              display: ["Be Vietnam Pro"],
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .glass-card {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .glass-nav {
+        background: rgba(16, 22, 34, 0.8);
+        backdrop-filter: blur(20px);
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+      }
+    </style>
+    <style>
+      body {
+        min-height: max(884px, 100dvh);
+      }
+    </style>
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col"
+  >
+    <!-- Header Section -->
+    <header
+      class="sticky top-0 z-20 px-4 pt-6 pb-2 bg-background-dark/80 backdrop-blur-md"
+    >
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold tracking-tight">Les Habitants</h1>
+        <button
+          class="w-10 h-10 rounded-full glass-card flex items-center justify-center"
+        >
+          <span class="material-symbols-outlined text-slate-100">person</span>
+        </button>
+      </div>
+      <!-- Search Bar -->
+      <div class="relative group">
+        <div
+          class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+        >
+          <span
+            class="material-symbols-outlined text-slate-400 group-focus-within:text-primary transition-colors"
+            >search</span
+          >
+        </div>
+        <input
+          class="block w-full pl-10 pr-3 py-3 glass-card rounded-xl border-none focus:ring-2 focus:ring-primary text-slate-100 placeholder-slate-400 text-sm"
+          placeholder="Rechercher un candidat"
+          type="text"
+        />
+      </div>
+    </header>
+    <!-- Content Grid -->
+    <main class="flex-1 px-4 py-4 mb-24">
+      <div class="grid grid-cols-2 gap-4">
+        <!-- Candidate 1 -->
+        <div
+          class="glass-card rounded-xl overflow-hidden flex flex-col relative"
+        >
+          <div class="aspect-[4/5] w-full relative">
+            <img
+              alt="Candidat 1"
+              class="w-full h-full object-cover"
+              data-alt="Portrait of a young male athlete smiling"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWVs4tky30OTcgtIHmk1g4BQdh2CBaOfBkE_NT2RDKq45OHq9bw0MU49izLCeKBmmAarDL4fKJxizQWz5ZGfBc63Vs1dXhRaZ2z036dmZd6H51Kk0tRewJvJc8a_zrsCnDbgAxZXiMEVC6lULdCc-dD010KwEpCMgSn4loBf5zCvYU1tBZ9S55TNxfU9589Ib7YUoMM5JsMOfEkctHdH4XynlXbuBCqJ7kMP_9c1fboAaMfX_pyFkf6GE1UCBwo4_i6zlNe-GxHPw"
+            />
+            <div class="absolute top-2 left-2">
+              <span
+                class="bg-primary/90 backdrop-blur-sm text-[10px] font-bold text-white px-2 py-1 rounded-full uppercase tracking-wider"
+                >Soutenu par Nike</span
+              >
+            </div>
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-background-dark/90 via-transparent to-transparent"
+            ></div>
+          </div>
+          <div class="p-3 mt-auto">
+            <p class="font-semibold text-sm">Jean Dupont</p>
+            <p class="text-xs text-slate-400">Lyon, FR</p>
+          </div>
+        </div>
+        <!-- Candidate 2 -->
+        <div
+          class="glass-card rounded-xl overflow-hidden flex flex-col relative"
+        >
+          <div class="aspect-[4/5] w-full relative">
+            <img
+              alt="Candidat 2"
+              class="w-full h-full object-cover"
+              data-alt="Portrait of a female professional runner"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdBlFjqi_TvSONbnZTpOT7y7_wo3zpBr_Mr9EXhP5G4DozphSUwV1xDRUJR9Z0t23V2S793J7mRAGBTVJ1a7ldEvPcObCNckzsrz1XCK9jOFIwVQXjCfsoVU2goDUJ2llwvvyU1fKdPREyhRvc7RBAItB8H8StUyWTtn1tAMMX-D1Xz99x1sefq6GjE3kGGllLSX4cAjPccod6ovC3PS3SIrqFTCkSt3d-70M6qKV8kTef30aSxDDjvFaJU4OTbeSdoXZ6HVJlkGo"
+            />
+            <div class="absolute top-2 left-2">
+              <span
+                class="bg-primary/90 backdrop-blur-sm text-[10px] font-bold text-white px-2 py-1 rounded-full uppercase tracking-wider"
+                >Soutenu par Adidas</span
+              >
+            </div>
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-background-dark/90 via-transparent to-transparent"
+            ></div>
+          </div>
+          <div class="p-3 mt-auto">
+            <p class="font-semibold text-sm">Marie Curie</p>
+            <p class="text-xs text-slate-400">Paris, FR</p>
+          </div>
+        </div>
+        <!-- Candidate 3 -->
+        <div
+          class="glass-card rounded-xl overflow-hidden flex flex-col relative"
+        >
+          <div class="aspect-[4/5] w-full relative">
+            <img
+              alt="Candidat 3"
+              class="w-full h-full object-cover"
+              data-alt="Portrait of a male fitness influencer"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAseiGXhKsZg8XH4iR06nCGT3nbd_eLg871n46LxasVjIAQQWkFvX9sESLdjSRPQ_3bNC9KeARP973B7ZamTCQnr-TXoLSzgkg6VFV7ib348uyY9mMRGHP1wqKu3pM0WHl3aS1zAReDPHbMq6JGP4zQRoKTt28t4rKcxREsIstFzKuSD1ArLzXVvMpqJ8u78TqANnWbv4THe6Qm3hQQWw9SVaUdIje3ksemF6YVcxmfu_irZKXvNR2tqwNPwNqraP5_IefjqiVUbBI"
+            />
+            <div class="absolute top-2 left-2">
+              <span
+                class="bg-primary/90 backdrop-blur-sm text-[10px] font-bold text-white px-2 py-1 rounded-full uppercase tracking-wider"
+                >Soutenu par Puma</span
+              >
+            </div>
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-background-dark/90 via-transparent to-transparent"
+            ></div>
+          </div>
+          <div class="p-3 mt-auto">
+            <p class="font-semibold text-sm">Lucas Bernard</p>
+            <p class="text-xs text-slate-400">Marseille, FR</p>
+          </div>
+        </div>
+        <!-- Candidate 4 -->
+        <div
+          class="glass-card rounded-xl overflow-hidden flex flex-col relative"
+        >
+          <div class="aspect-[4/5] w-full relative">
+            <img
+              alt="Candidat 4"
+              class="w-full h-full object-cover"
+              data-alt="Portrait of a young female swimmer"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIB82NhCcEP2l8tof-eYqcKI8BnFG0YNMGxEnmpcJEmep0QzzEJNLyPVTrZM0fC15NDRrWIKhjfzOkVr_8quWWqYtYLXk-Njj59ohvwCurIa5plKngI4Bfbk2vonQlbL7AEvxPQznLl_iQnd3Hu1u9NCyWEoHSOj8-vBNEOg06CBxpfXTLzefTymUzC08YLC-3k7ZqJgXCQAkNSgl3fXCa4_E78TDez-0XFK1jqZPIXZb9fqxiSitH8LAjWNVfZ7114T1IAsyQ5Ic"
+            />
+            <div class="absolute top-2 left-2">
+              <span
+                class="bg-primary/90 backdrop-blur-sm text-[10px] font-bold text-white px-2 py-1 rounded-full uppercase tracking-wider"
+                >Soutenu par Reebok</span
+              >
+            </div>
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-background-dark/90 via-transparent to-transparent"
+            ></div>
+          </div>
+          <div class="p-3 mt-auto">
+            <p class="font-semibold text-sm">Sophie Martin</p>
+            <p class="text-xs text-slate-400">Bordeaux, FR</p>
+          </div>
+        </div>
+        <!-- Candidate 5 -->
+        <div
+          class="glass-card rounded-xl overflow-hidden flex flex-col relative"
+        >
+          <div class="aspect-[4/5] w-full relative">
+            <img
+              alt="Candidat 5"
+              class="w-full h-full object-cover"
+              data-alt="Close up portrait of a male crossfit athlete"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjnTXXwBAAmEhDpy136iqJztQdzUXbRDczGh1519TFiGrv2H6gUH4l-VxKE0uR5n-byST9rqimDI4cxJWFJ_CzN8kNDcDyJ3sIHIQI4a-6e6Y_PF5XKnb6-O7ve-0uUJh1f3FGbx_b-b2BgHm36jM1HzX456F4wx48widyA1HSyCBq5nQcD1np77E7ChoReaDcxmIrZ3BaDOEGLMlrIvrVv86FIV-oTgbksxU8egsSCezNjJe-FbA_R5XInI_qgZhXNIiqPpPsx7E"
+            />
+            <div class="absolute top-2 left-2">
+              <span
+                class="bg-primary/90 backdrop-blur-sm text-[10px] font-bold text-white px-2 py-1 rounded-full uppercase tracking-wider"
+                >Soutenu par Nike</span
+              >
+            </div>
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-background-dark/90 via-transparent to-transparent"
+            ></div>
+          </div>
+          <div class="p-3 mt-auto">
+            <p class="font-semibold text-sm">Thomas Muller</p>
+            <p class="text-xs text-slate-400">Nice, FR</p>
+          </div>
+        </div>
+        <!-- Candidate 6 -->
+        <div
+          class="glass-card rounded-xl overflow-hidden flex flex-col relative"
+        >
+          <div class="aspect-[4/5] w-full relative">
+            <img
+              alt="Candidat 6"
+              class="w-full h-full object-cover"
+              data-alt="Portrait of a female sprinter"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFljO5iPXOLp_A9Q0u_07wRXCLOwGL5vxYSgFzSKIpQcaeZCHmRVc3kQ34LvUtQkA_bH9AE_B_joFhzLY6E_etQWWtZKjvD62TIGg4066KBB9ivtO5YDnZSi_22NJROVG9zHbwvX9vZtyHfjiVs35qforq1_Z2WzIMokph-ve-5bNjixfZHYB8aQ_zHqLHchI7k4lAlttzUKSMP_DrHhoxWC0tzqaeJvb8KsqOTJOugB8z4foUtFMFXRTbkmnOxPk3KIfsnkkwQK4"
+            />
+            <div class="absolute top-2 left-2">
+              <span
+                class="bg-primary/90 backdrop-blur-sm text-[10px] font-bold text-white px-2 py-1 rounded-full uppercase tracking-wider"
+                >Soutenu par Adidas</span
+              >
+            </div>
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-background-dark/90 via-transparent to-transparent"
+            ></div>
+          </div>
+          <div class="p-3 mt-auto">
+            <p class="font-semibold text-sm">Clara Lefebvre</p>
+            <p class="text-xs text-slate-400">Toulouse, FR</p>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- Bottom Navigation Bar -->
+    <nav
+      class="fixed bottom-0 left-0 right-0 glass-nav z-30 px-6 py-3 flex items-center justify-between"
+    >
+      <a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+        <span class="material-symbols-outlined text-2xl">home</span>
+        <span class="text-[10px] font-medium">Accueil</span>
+      </a>
+      <a class="flex flex-col items-center gap-1 text-primary" href="#">
+        <span
+          class="material-symbols-outlined text-2xl"
+          style="font-variation-settings: &quot;FILL&quot; 1"
+          >group</span
+        >
+        <span class="text-[10px] font-medium">Candidats</span>
+      </a>
+      <a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+        <span class="material-symbols-outlined text-2xl">trophy</span>
+        <span class="text-[10px] font-medium">Défis</span>
+      </a>
+      <a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+        <span class="material-symbols-outlined text-2xl">person</span>
+        <span class="text-[10px] font-medium">Profil</span>
+      </a>
+    </nav>
+  </body>
+</html>

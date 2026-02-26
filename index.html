@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="fr" x-data="app()" x-init="init()" :class="{ 'dark': dark }">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ASINT — Excellence Digitale au Togo</title>
+  <meta name="description" content="ASINT — Agence Digitale Togolaise : Web, Mobile, IA, Cybersécurité, Consulting & Formation depuis Lomé, Togo." />
+
+  <!-- Polices Premium -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Outfit', 'sans-serif'],
+            body: ['Plus Jakarta Sans', 'sans-serif'],
+          },
+          colors: {
+            brand: { 500: '#0ea5e9', 600: '#0284c7' },
+            accent: { DEFAULT: '#f97316' },
+            gold:   { DEFAULT: '#f59e25', light: '#fde68a' },
+            teal:   { DEFAULT: '#00b8a9', dark: '#007a6e' },
+            dark: { bg: '#04070d', surface: '#080f1d', card: '#0d1526' },
+          },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    [x-cloak] { display: none !important; }
+
+    :root {
+      --clr-bg:      #04070d;
+      --clr-surface: #080f1d;
+      --clr-card:    #0d1526;
+      --clr-border:  #162035;
+      --clr-brand:   #0ea5e9;
+      --clr-accent:  #f97316;
+      --clr-gold:    #f59e25;
+      --clr-teal:    #00b8a9;
+      --clr-text:    #f1f5f9;
+      --clr-muted:   #475569;
+      scroll-behavior: smooth;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background: var(--clr-bg); color: var(--clr-text); overflow-x: hidden; }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--clr-bg); }
+    ::-webkit-scrollbar-thumb { background: var(--clr-brand); border-radius: 3px; }
+
+    /* ── Canvas ── */
+    #hero-canvas { position: absolute; inset: 0; z-index: 0; pointer-events: none; width: 100%; height: 100%; }
+
+    /* ── Glass ── */
+    .glass {
+      background: rgba(8, 15, 29, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .glass-sm {
+      background: rgba(255,255,255,0.025);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* ── Gradient text ── */
+    .gradient-text {
+      background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 50%, #f97316 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .gradient-text-gold {
+      background: linear-gradient(135deg, #f59e25 0%, #fde68a 50%, #00b8a9 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── Reveal ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.8s cubic-bezier(0.4,0,0.2,1), transform 0.8s cubic-bezier(0.4,0,0.2,1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ── Image zoom ── */
+    .img-zoom { overflow: hidden; }
+    .img-zoom img { transition: transform 0.6s cubic-bezier(0.4,0,0.2,1); display: block; width: 100%; height: 100%; object-fit: cover; }
+    .img-zoom:hover img { transform: scale(1.07); }
+
+    /* ── Nav link ── */
+    .nav-link {
+      position: relative;
+      color: #64748b;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0; width: 0; height: 2px;
+      background: var(--clr-brand);
+      transition: width 0.3s;
+    }
+    .nav-link:hover { color: #f1f5f9; }
+    .nav-link:hover::after { width: 100%; }
+
+    /* ── Buttons ── */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.875rem 2rem; border-radius: 0.875rem;
+      font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.9rem;
+      background: var(--clr-brand);
+      color: #fff; border: none; cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+    .btn-primary:hover { background: #0284c7; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(14,165,233,0.35); }
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.875rem 2rem; border-radius: 0.875rem;
+      font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.9rem;
+      background: rgba(255,255,255,0.05);
+      color: #f1f5f9; border: 1px solid rgba(255,255,255,0.1); cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s;
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); transform: translateY(-2px); }
+
+    .btn-white {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+      padding: 1.125rem 2rem; border-radius: 0.875rem;
+      font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 0.95rem;
+      background: #f1f5f9; color: #04070d; border: none; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-white:hover { background: var(--clr-brand); color: #fff; transform: translateY(-2px); }
+
+    /* ── Cards ── */
+    .service-card {
+      background: var(--clr-card);
+      border: 1px solid var(--clr-border);
+      border-radius: 1.5rem;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    }
+    .service-card:hover {
+      border-color: rgba(14,165,233,0.4);
+      transform: translateY(-6px);
+      box-shadow: 0 24px 60px rgba(14,165,233,0.07);
+    }
+
+    .portfolio-card {
+      border-radius: 1.25rem; overflow: hidden;
+      background: var(--clr-card);
+      border: 1px solid var(--clr-border);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .portfolio-card:hover { transform: translateY(-6px); box-shadow: 0 24px 60px rgba(0,0,0,0.5); }
+    .portfolio-card .overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(4,7,13,0.97) 0%, transparent 60%);
+      opacity: 0; transition: opacity 0.35s;
+      display: flex; align-items: flex-end; padding: 1.75rem;
+    }
+    .portfolio-card:hover .overlay { opacity: 1; }
+
+    .pricing-card {
+      background: var(--clr-card); border: 1px solid var(--clr-border);
+      border-radius: 1.5rem; padding: 2.5rem;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .pricing-card.featured {
+      background: linear-gradient(145deg, rgba(14,165,233,0.1), rgba(249,115,22,0.05));
+      border-color: rgba(14,165,233,0.4);
+      box-shadow: 0 0 60px rgba(14,165,233,0.1);
+    }
+    .pricing-card:hover { transform: translateY(-4px); }
+
+    .blog-card {
+      background: var(--clr-card); border: 1px solid var(--clr-border);
+      border-radius: 1.25rem; overflow: hidden;
+      transition: transform 0.3s, border-color 0.3s;
+    }
+    .blog-card:hover { transform: translateY(-4px); border-color: rgba(14,165,233,0.2); }
+
+    .team-card {
+      background: var(--clr-card); border: 1px solid var(--clr-border);
+      border-radius: 1.25rem; overflow: hidden;
+      transition: transform 0.3s, border-color 0.3s;
+    }
+    .team-card:hover { transform: translateY(-6px); border-color: rgba(14,165,233,0.3); }
+
+    /* ── Process step ── */
+    .process-connector {
+      position: absolute;
+      left: 1.375rem; top: 3rem; bottom: -3rem;
+      width: 1px;
+      background: linear-gradient(to bottom, rgba(14,165,233,0.35), transparent);
+    }
+
+    /* ── FAQ ── */
+    .faq-item {
+      background: var(--clr-card); border: 1px solid var(--clr-border);
+      border-radius: 1rem;
+      transition: border-color 0.2s;
+    }
+    .faq-item:hover { border-color: rgba(14,165,233,0.25); }
+
+    /* ── Badges ── */
+    .badge {
+      display: inline-flex; align-items: center;
+      padding: 0.25rem 0.75rem; border-radius: 9999px;
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .badge-brand { background: rgba(14,165,233,0.1); color: #38bdf8; border: 1px solid rgba(14,165,233,0.2); }
+    .badge-accent { background: rgba(249,115,22,0.1); color: #fb923c; border: 1px solid rgba(249,115,22,0.2); }
+    .badge-gold   { background: rgba(245,158,37,0.1); color: #fbbf24; border: 1px solid rgba(245,158,37,0.2); }
+    .badge-teal   { background: rgba(0,184,169,0.1);  color: #2dd4bf; border: 1px solid rgba(0,184,169,0.2); }
+    .badge-green  { background: rgba(34,197,94,0.1);  color: #4ade80; border: 1px solid rgba(34,197,94,0.2); }
+
+    /* ── Form ── */
+    .form-input {
+      width: 100%; background: rgba(4,7,13,0.5);
+      border: 1px solid var(--clr-border);
+      border-radius: 0.875rem; padding: 1rem 1.25rem;
+      color: var(--clr-text); font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.9rem; outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-input:focus {
+      border-color: var(--clr-brand);
+      box-shadow: 0 0 0 3px rgba(14,165,233,0.1);
+    }
+    .form-input::placeholder { color: #2a3f58; }
+    .form-input option { background: var(--clr-card); }
+
+    /* ── Mobile menu ── */
+    .mobile-menu {
+      transform: translateX(100%);
+      transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+    .mobile-menu.open { transform: translateX(0); }
+
+    /* ── Modal ── */
+    .modal-backdrop { background: rgba(4,7,13,0.9); backdrop-filter: blur(12px); }
+    .modal-content { animation: modalIn 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+    @keyframes modalIn {
+      from { opacity:0; transform:scale(0.9) translateY(16px); }
+      to   { opacity:1; transform:scale(1) translateY(0); }
+    }
+
+    /* ── Toggle ── */
+    .toggle-track {
+      width: 3.5rem; height: 1.875rem; border-radius: 9999px;
+      background: #162035; border: 1px solid #1e304a;
+      position: relative; cursor: pointer; transition: background 0.2s;
+    }
+    .toggle-track.on { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+    .toggle-thumb {
+      width: 1.375rem; height: 1.375rem; border-radius: 50%;
+      background: #fff; position: absolute; top: 50%; left: 4px;
+      transform: translateY(-50%); transition: left 0.2s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    .toggle-track.on .toggle-thumb { left: calc(100% - 26px); }
+
+    /* ── Logos scroll ── */
+    .logos-track {
+      display: flex; gap: 3rem;
+      animation: scrollLogos 22s linear infinite; width: max-content;
+    }
+    @keyframes scrollLogos {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ── Loading ── */
+    .loader-dot { animation: bounceDot 0.9s ease-in-out infinite; }
+    .loader-dot:nth-child(2) { animation-delay: 0.15s; }
+    .loader-dot:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes bounceDot {
+      0%,80%,100% { transform: translateY(0); }
+      40%          { transform: translateY(-10px); }
+    }
+
+    /* ── CTA Banner ── */
+    .cta-banner {
+      background: linear-gradient(135deg, rgba(14,165,233,0.09) 0%, rgba(249,115,22,0.06) 100%);
+      border: 1px solid rgba(14,165,233,0.18);
+      border-radius: 2rem; position: relative; overflow: hidden;
+    }
+    .cta-banner::before {
+      content: '';
+      position: absolute; top: -40%; left: -10%;
+      width: 50%; height: 200%;
+      background: radial-gradient(ellipse, rgba(14,165,233,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ── Togo stripe ── */
+    .togo-stripe {
+      height: 3px;
+      background: linear-gradient(90deg, #009a44 0%, #009a44 33%, #f9c518 33%, #f9c518 66%, #ce1126 66%);
+    }
+
+    /* ── Stat number ── */
+    .stat-num {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 900; line-height: 1;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      h1 { font-size: 2.5rem !important; }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ═══════════════════ LOADING ═══════════════════ -->
+<div x-show="loading"
+     x-transition:leave="transition duration-500"
+     x-transition:leave-start="opacity-100"
+     x-transition:leave-end="opacity-0"
+     class="fixed inset-0 z-[999] flex flex-col items-center justify-center"
+     style="background:#04070d;">
+  <div class="togo-stripe w-16 rounded-full mb-8 h-1"></div>
+  <div class="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 relative"
+       style="background:rgba(14,165,233,0.1); border:1px solid rgba(14,165,233,0.25);">
+    <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="#0ea5e9" stroke-width="2">
+      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+    </svg>
+    <div class="absolute inset-0 rounded-2xl border border-brand-500 opacity-25 animate-ping"></div>
+  </div>
+  <span style="font-family:'Outfit',sans-serif; font-weight:900; font-size:1.75rem; letter-spacing:-0.03em; color:white;">ASINT<span style="color:#0ea5e9;">.</span></span>
+  <p style="font-size:0.7rem; color:#334155; font-family:'Plus Jakarta Sans'; letter-spacing:0.12em; text-transform:uppercase; margin-top:0.25rem;">African Solutions & Innovative Technologies</p>
+  <div class="flex gap-2 mt-8">
+    <div class="loader-dot w-2 h-2 rounded-full bg-brand-500"></div>
+    <div class="loader-dot w-2 h-2 rounded-full bg-accent"></div>
+    <div class="loader-dot w-2 h-2 rounded-full bg-brand-500"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════ HEADER ═══════════════════ -->
+<header id="header"
+        class="fixed top-0 w-full z-50 transition-all duration-500"
+        :class="scrolled ? 'glass py-3 border-b border-white/5' : 'py-6'">
+  <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
+
+    <!-- Logo -->
+    <a href="#" class="flex items-center gap-3 group" aria-label="ASINT">
+      <div class="relative overflow-hidden w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform"
+           style="background:#0d1526; border:1px solid rgba(14,165,233,0.25);">
+        <div class="togo-stripe absolute top-0 left-0 right-0 h-0.5 rounded-none"></div>
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#0ea5e9" stroke-width="2.5">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <div>
+        <span style="font-family:'Outfit',sans-serif; font-weight:900; font-size:1.35rem; letter-spacing:-0.03em; color:white;">ASINT<span style="color:#0ea5e9;">.</span></span>
+        <div style="font-size:0.65rem; font-family:'Plus Jakarta Sans'; font-weight:600; color:#334155; letter-spacing:0.1em; text-transform:uppercase; line-height:1;">Lomé · Togo</div>
+      </div>
+    </a>
+
+    <!-- Desktop Nav -->
+    <nav class="hidden lg:flex items-center gap-8">
+      <a href="#services"   class="nav-link">Services</a>
+      <a href="#portfolio"  class="nav-link">Réalisations</a>
+      <a href="#process"    class="nav-link">Processus</a>
+      <a href="#pricing"    class="nav-link">Offres</a>
+      <a href="#about"      class="nav-link">L'Agence</a>
+      <a href="#blog"       class="nav-link">Blog</a>
+      <a href="#contact"    class="nav-link">Contact</a>
+    </nav>
+
+    <div class="hidden lg:flex items-center gap-3">
+      <button @click="lang=lang==='fr'?'en':'fr'"
+              class="text-xs font-bold text-slate-500 hover:text-white px-2 py-1 rounded-md border border-white/10 hover:border-white/25 transition-all"
+              style="font-family:'Plus Jakarta Sans';"
+              x-text="lang==='fr'?'EN':'FR'"></button>
+      <a href="#contact" class="btn-primary">
+        <span x-text="lang==='fr'?'Parlons de votre projet':'Start a project'"></span>
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+      </a>
+    </div>
+
+    <!-- Mobile burger -->
+    <button @click="mobileMenu=!mobileMenu" class="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white/5 transition-colors">
+      <div class="space-y-1.5">
+        <span class="block w-6 h-0.5 bg-white transition-all" :class="mobileMenu?'rotate-45 translate-y-2':''"></span>
+        <span class="block w-4 h-0.5 bg-white transition-all ml-auto" :class="mobileMenu?'opacity-0':''"></span>
+        <span class="block w-6 h-0.5 bg-white transition-all" :class="mobileMenu?'-rotate-45 -translate-y-2':''"></span>
+      </div>
+    </button>
+  </div>
+
+  <!-- Mobile drawer -->
+  <div class="fixed inset-y-0 right-0 w-80 z-50 mobile-menu glass border-l border-white/5" :class="mobileMenu?'open':''">
+    <div class="flex flex-col h-full p-8 pt-24">
+      <nav class="flex flex-col gap-6">
+        <template x-for="item in [{href:'#services',l:'Services'},{href:'#portfolio',l:'Réalisations'},{href:'#process',l:'Processus'},{href:'#pricing',l:'Offres'},{href:'#about',l:'L\'Agence'},{href:'#blog',l:'Blog'},{href:'#contact',l:'Contact'}]">
+          <a :href="item.href" class="text-xl font-display font-700 text-white/70 hover:text-white transition-colors" @click="mobileMenu=false" x-text="item.l"></a>
+        </template>
+      </nav>
+      <div class="mt-auto">
+        <a href="#contact" class="btn-primary w-full justify-center" @click="mobileMenu=false">Démarrer un projet</a>
+      </div>
+    </div>
+  </div>
+  <div x-show="mobileMenu" @click="mobileMenu=false" class="fixed inset-0 z-40 lg:hidden" style="background:rgba(0,0,0,0.5)"></div>
+</header>
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<section class="relative min-h-screen flex items-center pt-24 pb-16 overflow-hidden">
+  <canvas id="hero-canvas"></canvas>
+
+  <div class="absolute inset-0 z-[1]" style="background: radial-gradient(ellipse 80% 50% at 50% 100%, rgba(14,165,233,0.07) 0%, transparent 65%), linear-gradient(to bottom, rgba(4,7,13,0.3) 0%, rgba(4,7,13,0.65) 100%);"></div>
+
+  <div class="max-w-7xl mx-auto px-6 relative z-[2] w-full">
+    <div class="max-w-4xl">
+      <!-- Eyebrow -->
+      <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full glass-sm mb-8">
+        <span class="relative flex w-2 h-2">
+          <span class="absolute inline-flex w-full h-full rounded-full opacity-75 animate-ping" style="background:#0ea5e9;"></span>
+          <span class="relative inline-flex w-2 h-2 rounded-full" style="background:#0ea5e9;"></span>
+        </span>
+        <span style="color:#38bdf8; font-size:0.78rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;" x-text="lang==='fr'?'Leader de l\'innovation au Togo':'Innovation Leader in Togo'"></span>
+      </div>
+
+      <h1 style="font-family:'Outfit',sans-serif; font-size:clamp(3rem,7vw,6rem); font-weight:900; line-height:1.05; letter-spacing:-0.03em;" class="mb-8">
+        <span class="text-white" x-text="lang==='fr'?'L\'architecture':'The architecture'"></span><br>
+        <span class="text-white" x-text="lang==='fr'?'de votre ':'of your '"></span>
+        <span class="gradient-text" x-text="lang==='fr'?'succès digital.':'digital success.'"></span>
+      </h1>
+
+      <p class="text-lg md:text-xl text-slate-400 max-w-2xl mb-10 leading-relaxed font-light"
+         x-text="lang==='fr'?'ASINT propulse les entreprises africaines vers l\'excellence technologique. Développement Web, Mobile, IA, Cybersécurité et Consulting stratégique depuis Lomé, Togo.':'ASINT drives African businesses toward technological excellence. Web, Mobile, AI, Cybersecurity and Strategic Consulting from Lomé, Togo.'">
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-4 mb-20">
+        <a href="#contact" class="btn-primary text-base px-8 py-4">
+          <span x-text="lang==='fr'?'Démarrer un projet':'Start a project'"></span>
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </a>
+        <a href="#portfolio" class="btn-ghost text-base px-8 py-4">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          <span x-text="lang==='fr'?'Voir nos travaux':'View our work'"></span>
+        </a>
+      </div>
+
+      <!-- Stats -->
+      <div class="flex flex-wrap gap-10">
+        <template x-for="s in stats">
+          <div>
+            <div class="stat-num gradient-text" x-text="s.value"></div>
+            <div class="text-xs text-slate-500 mt-1 uppercase tracking-widest font-semibold" x-text="s.label"></div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-[2] flex flex-col items-center gap-2 animate-bounce">
+    <svg width="16" height="24" viewBox="0 0 16 24" fill="none">
+      <rect x="1" y="1" width="14" height="22" rx="7" stroke="#1e3048" stroke-width="1.5"/>
+      <circle cx="8" cy="8" r="2.5" fill="#0ea5e9"/>
+    </svg>
+  </div>
+</section>
+
+<!-- ═══════════════════ LOGOS ═══════════════════ -->
+<section class="py-14 border-y border-white/5 overflow-hidden">
+  <p class="text-center text-xs text-slate-600 uppercase tracking-widest mb-8 font-semibold" x-text="lang==='fr'?'Ils nous font confiance':'Trusted by'"></p>
+  <div class="relative">
+    <div class="logos-track" aria-hidden="true">
+      <template x-for="i in 2">
+        <template x-for="logo in partners">
+          <div class="flex items-center h-10 px-6 opacity-20 hover:opacity-60 transition-opacity grayscale hover:grayscale-0">
+            <span style="font-family:'Outfit',sans-serif; font-weight:800; font-size:1.1rem; color:white;" x-text="logo"></span>
+          </div>
+        </template>
+      </template>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ SERVICES ═══════════════════ -->
+<section id="services" class="py-32" style="background:var(--clr-bg);">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-20 reveal">
+      <span class="badge badge-brand mb-5" x-text="lang==='fr'?'Nos expertises':'Our expertise'"></span>
+      <h2 style="font-family:'Outfit',sans-serif; font-size:clamp(2.25rem,4vw,3.5rem); font-weight:900; line-height:1.1; letter-spacing:-0.025em;" class="text-white mb-5">
+        Expertises <span class="gradient-text">360°</span>
+      </h2>
+      <p class="text-slate-500 max-w-2xl mx-auto" x-text="lang==='fr'?'Nous combinons créativité et ingénierie pour bâtir des solutions robustes adaptées au marché africain.':'We combine creativity and engineering to build robust solutions tailored to the African market.'"></p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-7">
+      <template x-for="(svc, i) in services" :key="svc.id">
+        <div class="service-card reveal" :class="`reveal-delay-${(i%3)+1}`">
+          <!-- Image -->
+          <div class="img-zoom h-44">
+            <img :src="svc.image" :alt="svc.title" loading="lazy"
+                 onerror="this.parentElement.style.background='linear-gradient(135deg,rgba(14,165,233,0.1),rgba(14,165,233,0.03))'; this.style.display='none'">
+          </div>
+          <!-- Content -->
+          <div class="p-7">
+            <div class="w-11 h-11 rounded-xl flex items-center justify-center text-2xl mb-4"
+                 :style="`background:${svc.color}14;`" x-text="svc.icon"></div>
+            <h3 style="font-family:'Outfit',sans-serif; font-weight:800; font-size:1.2rem;" class="text-white mb-3" x-text="svc.title"></h3>
+            <p class="text-sm text-slate-400 leading-relaxed mb-5" x-text="svc.desc"></p>
+            <div class="flex flex-wrap gap-1.5 mb-5">
+              <template x-for="tag in svc.tags">
+                <span class="badge badge-brand text-[10px]" x-text="tag"></span>
+              </template>
+            </div>
+            <button class="flex items-center gap-1.5 text-sm font-bold group transition-colors"
+                    style="color:#38bdf8"
+                    @click="selectedService=svc; openModal('service')">
+              <span x-text="lang==='fr'?'En savoir plus':'Learn more'"></span>
+              <svg class="group-hover:translate-x-1 transition-transform" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ PROCESSUS ═══════════════════ -->
+<section id="process" class="py-32 border-y border-white/5" style="background:var(--clr-surface);">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="grid lg:grid-cols-2 gap-20 items-start">
+
+      <!-- Left: text steps -->
+      <div>
+        <div class="reveal mb-12">
+          <span class="badge badge-accent mb-5">Notre méthode</span>
+          <h2 style="font-family:'Outfit',sans-serif; font-size:clamp(2rem,3.5vw,3rem); font-weight:900; line-height:1.1; letter-spacing:-0.025em;" class="text-white mb-4"
+              x-text="lang==='fr'?'Comment nous concrétisons vos idées.':'How we bring your ideas to life.'"></h2>
+          <p class="text-slate-500" x-text="lang==='fr'?'Un processus transparent et éprouvé pour des résultats garantis.':'A transparent, proven process for guaranteed results.'"></p>
+        </div>
+
+        <div class="space-y-6">
+          <template x-for="(step, i) in processSteps" :key="i">
+            <div class="relative pl-16 reveal" :class="`reveal-delay-${i+1}`">
+              <!-- Connector line (not for last) -->
+              <div x-show="i < processSteps.length - 1" class="process-connector"></div>
+              <!-- Number bubble -->
+              <div class="absolute left-0 top-0 w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold z-10"
+                   style="background:rgba(14,165,233,0.12); border:1px solid rgba(14,165,233,0.3); color:#38bdf8; font-family:'Outfit',sans-serif; font-weight:800;"
+                   x-text="String(i+1).padStart(2,'0')"></div>
+              <!-- Card -->
+              <div class="p-6 rounded-2xl border transition-colors cursor-default group"
+                   style="background:var(--clr-card); border-color:var(--clr-border);"
+                   onmouseenter="this.style.borderColor='rgba(14,165,233,0.3)'"
+                   onmouseleave="this.style.borderColor='var(--clr-border)'">
+                <div class="flex items-start gap-4">
+                  <span class="text-2xl shrink-0 mt-0.5" x-text="step.icon"></span>
+                  <div>
+                    <h4 style="font-family:'Outfit',sans-serif; font-weight:800; font-size:1.05rem;" class="text-white mb-2" x-text="step.title"></h4>
+                    <p class="text-sm text-slate-400 leading-relaxed" x-text="step.desc"></p>
+                    <div class="flex flex-wrap gap-1.5 mt-3">
+                      <template x-for="tag in step.tags">
+                        <span class="badge badge-brand text-[10px]" x-text="tag"></span>
+                      </template>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- Right: real image -->
+      <div class="lg:sticky lg:top-32 reveal reveal-delay-2">
+        <div class="img-zoom rounded-3xl shadow-2xl shadow-brand-500/10 h-[580px]">
+          <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=900" alt="ASINT équipe au travail" class="w-full h-full object-cover rounded-3xl" loading="lazy">
+        </div>
+        <div class="grid grid-cols-2 gap-4 mt-4">
+          <div class="img-zoom rounded-2xl h-40">
+            <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&q=80&w=600" alt="Réunion stratégie" class="rounded-2xl" loading="lazy">
+          </div>
+          <div class="img-zoom rounded-2xl h-40">
+            <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=600" alt="Développement agile" class="rounded-2xl" loading="lazy">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ PORTFOLIO ═══════════════════ -->
+<section id="portfolio" class="py-32" style="background:var(--clr-bg);">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="flex flex-col md:flex-row justify-between items-end mb-16 reveal gap-6">
+      <div>
+        <span class="badge badge-accent mb-4">Portfolio</span>
+        <h2 style="font-family:'Outfit',sans-serif; font-size:clamp(2.25rem,4vw,3.5rem); font-weight:900; line-height:1.1; letter-spacing:-0.025em;" class="text-white"
+            x-text="lang==='fr'?'Études de Cas.':'Case Studies.'"></h2>
+        <p class="text-slate-500 mt-3" x-text="lang==='fr'?'L\'impact d\'ASINT sur la croissance de ses partenaires.':'The impact of ASINT on the growth of its partners.'"></p>
+      </div>
+      <a href="#" class="flex items-center gap-2 font-bold group transition-colors shrink-0" style="color:#38bdf8;"
+         x-text="lang==='fr'?'Voir tous les projets →':'See all projects →'"></a>
+    </div>
+
+    <!-- Filter -->
+    <div class="flex flex-wrap gap-2 mb-10 reveal" role="tablist">
+      <template x-for="f in portfolioFilters">
+        <button class="px-4 py-2 rounded-full text-sm font-bold transition-all border"
+                :class="portfolioFilter===f?'bg-brand-500 text-white border-brand-500':'glass-sm text-slate-400 hover:text-white border-white/10'"
+                @click="portfolioFilter=f"
+                x-text="f"></button>
+      </template>
+    </div>
+
+    <!-- Grid -->
+    <div class="grid md:grid-cols-2 gap-8">
+      <template x-for="(p, i) in filteredPortfolio" :key="p.id">
+        <div class="portfolio-card relative group cursor-pointer reveal" :class="`reveal-delay-${(i%2)+1}`"
+             @click="selectedProject=p; openModal('portfolio')">
+          <div class="img-zoom h-72 md:h-80">
+            <img :src="p.image" :alt="p.title" loading="lazy"
+                 onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg,'+p.color+'20,'+p.color+'08)'">
+          </div>
+          <!-- Overlay -->
+          <div class="overlay">
+            <div>
+              <div class="flex flex-wrap gap-1.5 mb-3">
+                <template x-for="t in p.tags"><span class="badge badge-brand" x-text="t"></span></template>
+              </div>
+              <h3 style="font-family:'Outfit',sans-serif; font-weight:800; font-size:1.35rem;" class="text-white" x-text="p.title"></h3>
+              <p class="text-sm text-slate-400 mt-1" x-text="p.client"></p>
+            </div>
+          </div>
+          <!-- Card body -->
+          <div class="p-6">
+            <div class="flex justify-between items-start">
+              <div>
+                <span class="badge badge-accent mb-2" x-text="p.tags[0] + ' — Togo'"></span>
+                <h3 style="font-family:'Outfit',sans-serif; font-weight:800; font-size:1.2rem;" class="text-white mt-1" x-text="p.title"></h3>
+                <p class="text-sm text-slate-400 mt-1" x-text="p.client"></p>
+              </div>
+              <div class="w-11 h-11 rounded-full border border-white/10 flex items-center justify-center shrink-0 group-hover:bg-brand-500 group-hover:border-brand-500 transition-all ml-4">
+                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ CTA BANNER ═══════════════════ -->
+<section class="py-16 px-6 max-w-7xl mx-auto">
+  <div class="cta-banner p-12 md:p-16 text-center reveal">
+    <div class="togo-stripe w-16 h-1 rounded-full mx-auto mb-6"></div>
+    <h2 style="font-family:'Outfit',sans-serif; font-size:clamp(2rem,4vw,3rem); font-weight:900; line-height:1.1; letter-spacing:-0.025em;" class="text-white mb-4"
+        x-text="lang==='fr'?'Prêt à transformer votre business ?':'Ready to transform your business?'"></h2>
+    <p class="text-slate-400 max-w-xl mx-auto mb-8"
+       x-text="lang==='fr'?'Rejoignez les entreprises togolaises qui ont choisi ASINT pour leur transformation digitale. Devis gratuit sous 24h.':'Join Togolese companies that chose ASINT for their digital transformation. Free quote within 24h.'"></p>
+    <div class="flex flex-col sm:flex-row justify-center gap-4">
+      <a href="#contact" class="btn-primary text-base px-8 py-4">
+        <span x-text="lang==='fr'?'Obtenir un devis gratuit':'Get a free quote'"></span>
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+      </a>
+      <a href="tel:+22890000000" class="btn-ghost text-base px-8 py-4">
+        📞 <span x-text="lang==='fr'?'Appelez-nous':'Call us'"></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ PRICING ═══════════════════ -->
+<section id="pricing" class="py-32 border-y border-white/5" style="background:var(--clr-surface);">
+  <div class="max-w-5xl mx-auto px-6">
+    <div class="text-center mb-14 reveal">
+      <span class="badge badge-green mb-5">Offres & Tarifs</span>
+      <h2 style="font-family:'Outfit',sans-serif; font-size:clamp(2.25rem,4vw,3.5rem); font-weight:900; line-height:1.1; letter-spacing:-0.025em;" class="text-white mb-5"
+          x-text="lang==='fr'?'Des forfaits adaptés.':'Plans that scale.'"></h2>
+      <!-- Toggle -->
+      <div class="flex items-center justify-center gap-4 mt-6">
+        <span class="text-sm font-semibold" :class="!yearlyBilling?'text-white':'text-slate-500'" x-text="lang==='fr'?'Mensuel':'Monthly'"></span>
+        <div class="toggle-track" :class="yearlyBilling?'on':''" @click="yearlyBilling=!yearlyBilling" role="switch">
+          <div class="toggle-thumb"></div>
+        </div>
+        <span class="text-sm font-semibold" :class="yearlyBilling?'text-white':'text-slate-500'" x-text="lang==='fr'?'Annuel':'Yearly'"></span>
+        <span class="badge badge-green ml-1">−20%</span>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-7">
+      <template x-for="plan in plans" :key="plan.id">
+        <div class="pricing-card reveal" :class="plan.featured?'featured':''">
+          <div class="badge badge-brand mb-4" x-show="plan.featured" x-text="lang==='fr'?'Recommandé':'Recommended'"></div>
+          <h3 style="font-family:'Outfit',sans-serif; font-weight:900; font-size:1.35rem;" class="text-white mb-2" x-text="plan.name"></h3>
+          <p class="text-slate-400 text-sm mb-6" x-text="plan.desc"></p>
+          <div class="mb-6">
+            <span style="font-family:'Outfit',sans-serif; font-weight:900; font-size:2.5rem;" class="text-white" x-text="yearlyBilling?plan.yearlyPrice:plan.monthlyPrice"></span>
+            <span class="text-slate-500 text-sm" x-text="lang==='fr'?'/mois':'/mo'"></span>
+          </div>
+          <ul class="space-y-3 mb-8">
+            <template x-for="f in plan.features">
+              <li class="flex items-start gap-2.5 text-sm text-slate-300">
+                <svg class="shrink-0 mt-0.5 text-brand-500" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>
+                <span x-text="f"></span>
+              </li>
+            </template>
+          </ul>
+          <button class="w-full py-3.5 rounded-xl font-bold transition-all text-sm"
+                  :class="plan.featured?'btn-primary justify-center':'btn-ghost justify-center'"
+                  @click="openModal('contact')"
+                  x-text="lang==='fr'?'Choisir ce forfait':'Get started'"></button>
+        </div>
+      </template>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ ABOUT / EQUIPE ═══════════════════ -->
+<section id="about" class="py-32" style="background:var(--clr-bg);">
+  <div class="max-w-7xl mx-auto px-6">
+    <!-- Header -->
+    <div class="grid lg:grid-cols-2 gap-20 items-center mb-24">
+      <div class="reveal">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass-sm mb-6">
+          <span>🇹🇬</span>
+          <span class="text-xs font-bold uppercase tracking-widest" style="color:#f59e25;">Fièrement Togolais</span>
+        </div>
+        <h2 style="font-family:'Outfit',sans-serif; font-size:clamp(2rem,3.5vw,3rem); font-weight:900; line-height:1.1; letter-spacing:-0.025em;" class="text-white mb-5"
+            x-text="lang==='fr'?'Nous donnons vie à vos ambitions digitales.':'We bring your digital ambitions to life.'"></h2>
+        <p class="text-slate-400 leading-relaxed mb-5"
+           x-text="lang==='fr'?'Fondée en 2018 à Lomé, ASINT est la première agence digitale full-service du Togo. Nous rassemblons des experts qui conçoivent des expériences numériques de classe mondiale, avec une connaissance profonde du marché africain.':'Founded in 2018 in Lomé, ASINT is Togo\\'s first full-service digital agency, combining world-class expertise with deep knowledge of the African market.'"></p>
+        <p class="text-slate-400 leading-relaxed mb-10"
+           x-text="lang==='fr'?'Notre mission : propulser la transformation digitale en Afrique de l\'Ouest avec des solutions sur-mesure adaptées aux réalités locales — intégration Mobile Money, langues africaines, contraintes de connectivité.':'Our mission: drive digital transformation in West Africa with tailor-made solutions adapted to local realities — Mobile Money, African languages, connectivity constraints.'"></p>
+        <div class="grid grid-cols-2 gap-4">
+          <template x-for="v in values">
+            <div class="p-5 rounded-2xl border transition-all cursor-default group"
+                 style="background:var(--clr-card); border-color:var(--clr-border);"
+                 onmouseenter="this.style.borderColor='rgba(14,165,233,0.3)'"
+                 onmouseleave="this.style.borderColor='var(--clr-border)'">
+              <div class="text-2xl mb-3" x-text="v.icon"></div>
+              <div style="font-family:'Outfit',sans-serif; font-weight:800;" class="text-white text-sm mb-1" x-text="v.title"></div>
+              <div class="text-xs text-slate-500" x-text="v.desc"></div>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <div class="reveal reveal-delay-2">
+        <div class="img-zoom rounded-3xl h-[520px] shadow-2xl shadow-brand-500/10">
+          <img src="https://images.unsplash.com/photo-1531538606174-0f90ff5dce83?auto=format&fit=crop&q=80&w=900" alt="L'équipe ASINT à Lomé" class="w-full h-full object-cover rounded-3xl" loading="lazy">
+        </div>
+      </div>
+    </div>
+
+    <!-- Team -->
+    <div class="reveal">
+      <div class="text-center mb-12">
+        <span class="badge badge-brand mb-4">L'équipe</span>
+        <h3 style="font-family:'Outfit',sans-serif; font-size:2rem; font-weight:900; letter-spacing:-0.02em;" class="text-white"
+            x-text="lang==='fr'?'Les experts derrière ASINT.':'The experts behind ASINT.'"></h3>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
+        <template x-for="(m, i) in team" :key="m.name">
+          <div class="team-card" :class="i===0?'sm:col-span-2 lg:col-span-2 xl:col-span-2':''">
+            <div class="img-zoom" :class="i===0?'h-52':'h-40'">
+              <img :src="m.photo" :alt="m.name" loading="lazy"
+                   onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;background:linear-gradient(135deg,'+m.color+'20,'+m.color+'08)&quot;>'+m.avatar+'</div>'">
+            </div>
+            <div class="p-4">
+              <div style="font-family:'Outfit',sans-serif; font-weight:800;" class="text-white text-sm" x-text="m.name"></div>
+              <div class="text-xs mt-0.5 font-semibold" :style="`color:${m.color}`" x-text="m.role"></div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ TESTIMONIALS ═══════════════════ -->
+<section class="py-32 border-y border-white/5" style="background:var(--clr-surface);">
+  <div class="max-w-4xl mx-auto px-6">
+    <div class="text-center mb-16 reveal">
+      <span class="badge badge-brand mb-4">Témoignages</span>
+      <h2 style="font-family:'Outfit',sans-serif; font-size:clamp(2rem,4vw,3rem); font-weight:900; letter-spacing:-0.025em;" class="text-white"
+          x-text="lang==='fr'?'Ce qu\'ils disent de nous.':'What they say.'"></h2>
+    </div>
+
+    <div x-data="testimonialCarousel()" class="relative overflow-hidden">
+      <div class="flex transition-transform duration-500 ease-in-out" :style="`transform:translateX(-${current*100}%)`">
+        <template x-for="(t, i) in testimonials" :key="i">
+          <div class="min-w-full px-2">
+            <div class="glass rounded-3xl p-10 md:p-14 text-center">
+              <div class="flex justify-center gap-1 mb-6">
+                <template x-for="s in 5">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="#f97316"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                </template>
+              </div>
+              <p class="text-xl md:text-2xl text-slate-200 leading-relaxed italic mb-10 font-light" x-text="'« ' + t.quote + ' »'"></p>
+              <div class="flex items-center justify-center gap-4">
+                <div class="w-14 h-14 rounded-full overflow-hidden flex items-center justify-center shrink-0"
+                     :style="`background:linear-gradient(135deg,${t.color}33,${t.color}66)`">
+                  <img :src="t.photo" :alt="t.name" class="w-full h-full object-cover" loading="lazy"
+                       onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=font-size:1.5rem>'+t.avatar+'</span>'">
+                </div>
+                <div class="text-left">
+                  <div style="font-family:'Outfit',sans-serif; font-weight:800;" class="text-white" x-text="t.name"></div>
+                  <div class="text-xs text-slate-500" x-text="t.role + ' — ' + t.company"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+      <div class="flex items-center justify-center gap-3 mt-8">
+        <button @click="prev()" class="w-10 h-10 rounded-full glass-sm border border-white/10 flex items-center justify-center hover:border-brand-500 transition-colors">
+          <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        </button>
+        <template x-for="(t, i) in testimonials">
+          <button @click="current=i" class="h-2 rounded-full transition-all"
+                  :class="i===current?'w-6 bg-brand-500':'w-2 bg-white/20'"></button>
+        </template>
+        <button @click="next()" class="w-10 h-10 rounded-full glass-sm border border-white/10 flex items-center justify-center hover:border-brand-500 transition-colors">
+          <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ FAQ ═══════════════════ -->
+<section id="faq" class="py-32" style="background:var(--clr-bg);">
+  <div class="max-w-3xl mx-auto px-6">
+    <div class="text-center mb-16 reveal">
+      <span class="badge badge-teal mb-4">FAQ</span>
+      <h2 style="font-family:'Outfit',sans-serif; font-size:clamp(2rem,4vw,3rem); font-weight:900; letter-spacing:-0.025em;" class="text-white mb-4"
+          x-text="lang==='fr'?'Questions fréquentes.':'Frequently asked questions.'"></h2>
+      <p class="text-slate-500" x-text="lang==='fr'?'Tout ce que vous devez savoir avant de nous contacter.':'Everything you need to know before reaching out.'"></p>
+    </div>
+
+    <div class="space-y-3" x-data="{ openFaq: null }">
+      <template x-for="(faq, i) in faqs" :key="i">
+        <div class="faq-item reveal" :class="`reveal-delay-${(i%3)+1}`">
+          <button class="w-full flex items-center justify-between p-6 text-left" @click="openFaq = openFaq===i ? null : i">
+            <span style="font-family:'Outfit',sans-serif; font-weight:700; font-size:1rem;" class="text-white pr-4" x-text="faq.q"></span>
+            <svg class="shrink-0 transition-transform duration-300 text-brand-500" :class="openFaq===i?'rotate-45':''"
+                 width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+          </button>
+          <div x-show="openFaq===i" x-collapse class="px-6 pb-6">
+            <p class="text-slate-400 leading-relaxed text-sm" x-text="faq.a"></p>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ BLOG ═══════════════════ -->
+<section id="blog" class="py-32 border-y border-white/5" style="background:var(--clr-surface);">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="flex flex-col sm:flex-row justify-between items-end mb-14 gap-5 reveal">
+      <div>
+        <span class="badge badge-accent mb-4">Blog & Ressources</span>
+        <h2 style="font-family:'Outfit',sans-serif; font-size:clamp(2.25rem,4vw,3.5rem); font-weight:900; letter-spacing:-0.025em;" class="text-white"
+            x-text="lang==='fr'?'Derniers articles.':'Latest articles.'"></h2>
+      </div>
+      <a href="#" class="btn-ghost shrink-0 text-sm px-5 py-2.5" x-text="lang==='fr'?'Tous les articles':'All articles'"></a>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <template x-for="(article, i) in articles" :key="article.id">
+        <article class="blog-card reveal" :class="`reveal-delay-${i+1}`">
+          <div class="img-zoom h-44">
+            <img :src="article.image" :alt="article.title" loading="lazy"
+                 onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg,'+article.color+'15,'+article.color+'05)'; this.parentElement.innerHTML='<div style=&quot;height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem;&quot;>'+article.emoji+'</div>'">
+          </div>
+          <div class="p-6">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="badge badge-brand" x-text="article.category"></span>
+              <span class="text-xs text-slate-500" x-text="article.date"></span>
+            </div>
+            <h3 style="font-family:'Outfit',sans-serif; font-weight:800; line-height:1.3;" class="text-white mb-2" x-text="article.title"></h3>
+            <p class="text-sm text-slate-400 mb-4 line-clamp-2" x-text="article.excerpt"></p>
+            <a href="#" class="flex items-center gap-1.5 text-sm font-bold group transition-colors" style="color:#38bdf8;">
+              <span x-text="lang==='fr'?'Lire l\'article':'Read article'"></span>
+              <svg class="group-hover:translate-x-1 transition-transform" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+        </article>
+      </template>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ CONTACT ═══════════════════ -->
+<section id="contact" class="py-32" style="background:var(--clr-bg);">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="max-w-4xl mx-auto glass p-10 md:p-14 rounded-[2.5rem] reveal">
+      <div class="text-center mb-12">
+        <div class="togo-stripe w-16 h-1 rounded-full mx-auto mb-6"></div>
+        <h2 style="font-family:'Outfit',sans-serif; font-size:clamp(2rem,4vw,3rem); font-weight:900; letter-spacing:-0.025em;" class="text-white mb-3">
+          Prêt à <span class="gradient-text">transformer</span> votre business ?
+        </h2>
+        <p class="text-slate-400" x-text="lang==='fr'?'Écrivez-nous pour un audit gratuit de 30 minutes. Notre équipe à Lomé vous répond sous 24h.':'Write to us for a free 30-minute audit. Our Lomé team responds within 24h.'"></p>
+      </div>
+
+      <div x-show="contactForm.success" class="text-center py-8">
+        <div class="text-5xl mb-4">✅</div>
+        <h3 style="font-family:'Outfit',sans-serif; font-weight:900;" class="text-white text-xl mb-2" x-text="lang==='fr'?'Message envoyé !':'Message sent!'"></h3>
+        <p class="text-slate-400" x-text="lang==='fr'?'Notre équipe vous répond dans les 24h.':'Our team will get back to you within 24h.'"></p>
+      </div>
+
+      <form x-show="!contactForm.success" @submit.prevent="submitContact()" novalidate>
+        <div class="grid md:grid-cols-2 gap-5 mb-5">
+          <div>
+            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2" x-text="lang==='fr'?'Nom Complet':'Full Name'"></label>
+            <input x-model="contactForm.firstName" type="text" class="form-input"
+                   :class="contactForm.errors.firstName?'border-red-500':''"
+                   :placeholder="lang==='fr'?'Koffi Mensah':'John Doe'" />
+            <p x-show="contactForm.errors.firstName" class="text-red-400 text-xs mt-1" x-text="contactForm.errors.firstName"></p>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Email Business</label>
+            <input x-model="contactForm.email" type="email" class="form-input"
+                   :class="contactForm.errors.email?'border-red-500':''"
+                   placeholder="contact@entreprise.tg" />
+            <p x-show="contactForm.errors.email" class="text-red-400 text-xs mt-1" x-text="contactForm.errors.email"></p>
+          </div>
+        </div>
+
+        <div class="mb-5">
+          <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2" x-text="lang==='fr'?'Sujet':'Subject'"></label>
+          <select x-model="contactForm.subject" class="form-input cursor-pointer">
+            <option value="" x-text="lang==='fr'?'Sélectionner un sujet…':'Select a subject…'"></option>
+            <option x-text="lang==='fr'?'Développement Web':'Web Development'"></option>
+            <option x-text="lang==='fr'?'Application Mobile':'Mobile App'"></option>
+            <option x-text="'Intelligence Artificielle'"></option>
+            <option x-text="lang==='fr'?'Cybersécurité':'Cybersecurity'"></option>
+            <option x-text="'Consulting'"></option>
+            <option x-text="lang==='fr'?'Formation':'Training'"></option>
+          </select>
+        </div>
+
+        <div class="mb-6">
+          <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2" x-text="lang==='fr'?'Votre Message':'Your Message'"></label>
+          <textarea x-model="contactForm.message" rows="5" class="form-input resize-none"
+                    :class="contactForm.errors.message?'border-red-500':''"
+                    :placeholder="lang==='fr'?'Décrivez votre projet, vos objectifs, votre budget estimatif…':'Describe your project, goals, estimated budget…'"></textarea>
+          <p x-show="contactForm.errors.message" class="text-red-400 text-xs mt-1" x-text="contactForm.errors.message"></p>
+        </div>
+
+        <button type="submit" class="btn-white w-full py-5 text-base" :disabled="contactForm.loading">
+          <template x-if="contactForm.loading">
+            <svg class="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+          </template>
+          <span x-text="contactForm.loading?(lang==='fr'?'Envoi…':'Sending…'):(lang==='fr'?'Envoyer la demande':'Send request')"></span>
+        </button>
+      </form>
+
+      <!-- Contact info -->
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-10 pt-10 border-t border-white/5">
+        <template x-for="info in contactInfo">
+          <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-lg"
+                 style="background:rgba(14,165,233,0.1);" x-text="info.icon"></div>
+            <div>
+              <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1" x-text="info.label"></div>
+              <div class="text-sm text-slate-300 font-medium" x-text="info.value"></div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ FOOTER ═══════════════════ -->
+<footer class="border-t border-white/5" style="background:#020509;" role="contentinfo">
+  <!-- Newsletter -->
+  <div class="py-14 px-6 border-b border-white/5">
+    <div class="max-w-3xl mx-auto text-center">
+      <h3 style="font-family:'Outfit',sans-serif; font-weight:900; font-size:1.75rem; letter-spacing:-0.02em;" class="text-white mb-2"
+          x-text="lang==='fr'?'Restez informés':'Stay in the loop'"></h3>
+      <p class="text-slate-500 mb-6 text-sm" x-text="lang==='fr'?'Actualités digitales, conseils tech et news de l\'agence.':'Digital news, tech tips and agency updates.'"></p>
+      <div class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+        <input type="email" class="form-input flex-1" :placeholder="lang==='fr'?'votre@email.com':'your@email.com'" />
+        <button class="btn-primary shrink-0" x-text="lang==='fr'?\"S'abonner\":'Subscribe'"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-6 py-14">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-10">
+      <!-- Brand -->
+      <div class="lg:col-span-2">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="relative overflow-hidden w-10 h-10 rounded-xl flex items-center justify-center" style="background:#0d1526; border:1px solid rgba(14,165,233,0.25);">
+            <div class="togo-stripe absolute top-0 left-0 right-0 h-0.5"></div>
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#0ea5e9" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <div>
+            <span style="font-family:'Outfit',sans-serif; font-weight:900; font-size:1.25rem; letter-spacing:-0.03em; color:white;">ASINT<span style="color:#0ea5e9;">.</span></span>
+            <div style="font-size:0.65rem; color:#334155; letter-spacing:0.1em; text-transform:uppercase; font-family:'Plus Jakarta Sans'; font-weight:600; line-height:1;">Lomé · Togo</div>
+          </div>
+        </div>
+        <p class="text-sm text-slate-500 leading-relaxed mb-4">African Solutions & Innovative Technologies.</p>
+        <p class="text-xs text-slate-600 mb-6" x-text="lang==='fr'?'Agence digitale full-service — Web, Mobile, IA, Cybersécurité, Consulting & Formation depuis Lomé, Togo.':'Full-service digital agency — Web, Mobile, AI, Security, Consulting & Training from Lomé, Togo.'"></p>
+        <div class="flex gap-3">
+          <template x-for="s in socials">
+            <a :href="s.href" class="w-9 h-9 rounded-xl glass-sm border border-white/5 flex items-center justify-center text-slate-400 hover:text-white hover:border-brand-500 transition-all" :aria-label="s.name">
+              <span x-html="s.svg"></span>
+            </a>
+          </template>
+        </div>
+      </div>
+      <template x-for="col in footerCols">
+        <div>
+          <h4 style="font-family:'Outfit',sans-serif; font-weight:800; font-size:0.875rem;" class="text-white mb-4" x-text="col.title"></h4>
+          <ul class="space-y-2.5">
+            <template x-for="link in col.links">
+              <li><a :href="link.href" class="text-sm text-slate-500 hover:text-slate-200 transition-colors" x-text="link.label"></a></li>
+            </template>
+          </ul>
+        </div>
+      </template>
+    </div>
+  </div>
+
+  <div class="border-t border-white/5 px-6 py-5">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600">
+      <span>© 2024 ASINT Digital Agency — Lomé, Togo. <span x-text="lang==='fr'?'Tous droits réservés.':'All rights reserved.'"></span></span>
+      <div class="flex gap-5">
+        <a href="#" class="hover:text-slate-400 transition-colors" x-text="lang==='fr'?'Mentions légales':'Legal'"></a>
+        <a href="#" class="hover:text-slate-400 transition-colors" x-text="lang==='fr'?'Confidentialité':'Privacy'"></a>
+        <a href="#" class="hover:text-slate-400 transition-colors">Cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════════ MODALS ═══════════════════ -->
+<div x-show="modal"
+     x-transition:enter="transition duration-200" x-transition:enter-start="opacity-0"
+     x-transition:leave="transition duration-200" x-transition:leave-end="opacity-0"
+     class="fixed inset-0 z-[100] modal-backdrop flex items-center justify-center p-4"
+     @click.self="modal=null">
+
+  <!-- Service modal -->
+  <div x-show="modal==='service' && selectedService" class="modal-content glass rounded-3xl p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto">
+    <div class="flex items-start justify-between mb-6">
+      <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-xl flex items-center justify-center text-3xl" :style="`background:${selectedService?.color}14`" x-text="selectedService?.icon"></div>
+        <h3 style="font-family:'Outfit',sans-serif; font-weight:900; font-size:1.25rem;" class="text-white" x-text="selectedService?.title"></h3>
+      </div>
+      <button @click="modal=null" class="text-slate-400 hover:text-white p-1">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <p class="text-slate-300 leading-relaxed mb-6" x-text="selectedService?.desc"></p>
+    <div class="flex flex-wrap gap-2 mb-8">
+      <template x-for="tag in selectedService?.tags"><span class="badge badge-brand" x-text="tag"></span></template>
+    </div>
+    <button class="btn-primary w-full justify-center" @click="modal=null; window.location='#contact'"
+            x-text="lang==='fr'?'Demander un devis':'Request a quote'"></button>
+  </div>
+
+  <!-- Portfolio modal -->
+  <div x-show="modal==='portfolio' && selectedProject" class="modal-content glass rounded-3xl p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto">
+    <div class="flex items-start justify-between mb-6">
+      <h3 style="font-family:'Outfit',sans-serif; font-weight:900; font-size:1.25rem;" class="text-white" x-text="selectedProject?.title"></h3>
+      <button @click="modal=null" class="text-slate-400 hover:text-white p-1">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="img-zoom rounded-2xl h-52 mb-6">
+      <img :src="selectedProject?.image" :alt="selectedProject?.title" class="w-full h-full rounded-2xl" loading="lazy"
+           onerror="this.style.display='none'">
+    </div>
+    <p class="text-slate-400 text-sm mb-3"><strong class="text-white">Client :</strong> <span x-text="selectedProject?.client"></span></p>
+    <p class="text-slate-300 leading-relaxed mb-6" x-text="selectedProject?.desc"></p>
+    <div class="flex flex-wrap gap-2">
+      <template x-for="t in selectedProject?.tags"><span class="badge badge-brand" x-text="t"></span></template>
+    </div>
+  </div>
+
+  <!-- Contact modal -->
+  <div x-show="modal==='contact'" class="modal-content glass rounded-3xl p-8 max-w-sm w-full">
+    <div class="flex items-center justify-between mb-5">
+      <h3 style="font-family:'Outfit',sans-serif; font-weight:900; font-size:1.2rem;" class="text-white">Démarrer un projet</h3>
+      <button @click="modal=null" class="text-slate-400 hover:text-white p-1">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <p class="text-slate-400 text-sm mb-6">Prenez contact avec notre équipe à Lomé dès maintenant.</p>
+    <a href="#contact" @click="modal=null" class="btn-primary w-full justify-center mb-3">Remplir le formulaire</a>
+    <a href="mailto:contact@asint.tg" class="btn-ghost w-full justify-center text-sm">contact@asint.tg</a>
+  </div>
+</div>
+
+<!-- ═══════════════════ JAVASCRIPT ═══════════════════ -->
+<script>
+function app() {
+  return {
+    loading: true,
+    dark: true,
+    scrolled: false,
+    mobileMenu: false,
+    modal: null,
+    lang: 'fr',
+    yearlyBilling: false,
+    portfolioFilter: 'Tous',
+    selectedService: null,
+    selectedProject: null,
+
+    contactForm: {
+      firstName:'', lastName:'', email:'', subject:'', message:'',
+      errors:{}, loading:false, success:false
+    },
+
+    stats: [
+      { value: '120+', label: 'Projets livrés' },
+      { value: '97%', label: 'Clients satisfaits' },
+      { value: '6 ans', label: "d'expérience" },
+      { value: '25+', label: 'Experts' },
+    ],
+
+    values: [
+      { icon: '⚡', title: 'Réactivité',    desc: 'Réponse en moins de 4h' },
+      { icon: '🎯', title: 'Précision',     desc: 'Livrables exacts et ponctuels' },
+      { icon: '🌍', title: 'Ancrage Local', desc: 'Expertise du marché africain' },
+      { icon: '🚀', title: 'Innovation',    desc: 'Technologies de pointe' },
+    ],
+
+    team: [
+      { name: 'Afi Mensah',      role: 'CEO & Co-Fondatrice',  avatar: '👩‍💼', color: '#0ea5e9',
+        photo: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=600&h=400&fit=crop&q=80' },
+      { name: 'Kodjo Attivor',   role: 'CTO',                  avatar: '👨‍💻', color: '#f97316',
+        photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=280&fit=crop&q=80' },
+      { name: 'Akua Sossah',     role: 'Lead Designer',        avatar: '👩‍🎨', color: '#a855f7',
+        photo: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=280&fit=crop&q=80' },
+      { name: 'Edem Koffi',      role: 'Lead Dev Mobile',      avatar: '👨‍🔧', color: '#22c55e',
+        photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=280&fit=crop&q=80' },
+      { name: 'Dzifa Agbodanu',  role: 'IA & Data Engineer',   avatar: '👩‍🔬', color: '#ec4899',
+        photo: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&h=280&fit=crop&q=80' },
+    ],
+
+    partners: ['Togocom', 'BOAD', 'UTB', 'ORABANK', 'Ecobank', 'Moov Africa', 'TdE', 'LONATO', 'SAZOF', 'GIZ'],
+
+    services: [
+      { id:1, icon:'🌐', color:'#0ea5e9', title:'Développement Web & Mobile',
+        image:'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=700',
+        desc:'Applications ultra-performantes en React, Next.js et Flutter. Sites vitrine, e-commerce, SaaS — adaptés au marché africain avec support offline et Mobile Money.',
+        tags:['React','Next.js','Flutter','Node.js'] },
+      { id:2, icon:'🤖', color:'#22c55e', title:'IA & Big Data',
+        image:'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?auto=format&fit=crop&q=80&w=700',
+        desc:'Optimisez vos décisions avec le Machine Learning et l\'IA générative. Chatbots multilingues (éwé, kabiyè, français), NLP, automatisation et data analytics.',
+        tags:['LLM','RAG','Python','TensorFlow'] },
+      { id:3, icon:'🔐', color:'#ef4444', title:'Cybersécurité & Audit',
+        image:'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=700',
+        desc:'Pentest, audit de code, conformité RGPD & réglementations UEMOA. Formation de vos équipes et mise en place de politiques de sécurité robustes.',
+        tags:['Pentest','RGPD','ISO 27001','SOC2'] },
+      { id:4, icon:'⚙️', color:'#a855f7', title:'Logiciels & Progiciels',
+        image:'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&q=80&w=700',
+        desc:'Développement de logiciels métier sur-mesure, ERP, CRM et solutions de gestion adaptés aux contraintes des entreprises africaines.',
+        tags:['Architecture','API','ERP','Microservices'] },
+      { id:5, icon:'☁️', color:'#06b6d4', title:'Cloud & Infrastructure',
+        image:'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=700',
+        desc:'Migration cloud AWS/GCP/Azure, Kubernetes, infrastructure as code avec Terraform. Architecture pensée pour les réalités africaines (latence, coût).',
+        tags:['AWS','GCP','Kubernetes','Terraform'] },
+      { id:6, icon:'🎓', color:'#f97316', title:'Formation & Consulting',
+        image:'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=700',
+        desc:'Programmes certifiants en dev web, IA, sécurité et agile. Audit de maturité numérique et accompagnement stratégique pour la transformation digitale.',
+        tags:['E-learning','Workshops','Agile','OKR'] },
+    ],
+
+    processSteps: [
+      { icon:'🔍', title:'Découverte & Audit',     desc:'Analyse profonde de vos besoins, de votre marché et de vos contraintes. Définition d\'une roadmap technologique précise.',     tags:['Atelier','Audit','Cadrage'] },
+      { icon:'🎨', title:'Design & Prototypage',    desc:'Wireframes, maquettes haute-fidélité et design system. Vous validez chaque étape avant que le développement commence.',          tags:['UX Design','Maquettes','Design System'] },
+      { icon:'⚙️', title:'Développement Agile',     desc:'Codage en sprints de 2 semaines. Tests unitaires, intégration et recette utilisateur à chaque étape. Transparence totale.',     tags:['Sprints','Tests','CI/CD'] },
+      { icon:'🚀', title:'Déploiement & Formation', desc:'Mise en production sécurisée, formation de vos équipes, documentation complète. Transition fluide garantie.',                    tags:['DevOps','Formation','Documentation'] },
+      { icon:'📊', title:'Support & Optimisation',  desc:'Monitoring 24/7, tableaux de bord analytics, optimisations continues. Notre équipe basée à Lomé reste votre partenaire.',       tags:['SLA','Analytics','Support'] },
+    ],
+
+    portfolioFilters: ['Tous','Web','Mobile','IA','Sécurité','Consulting'],
+    get filteredPortfolio() {
+      if (this.portfolioFilter === 'Tous') return this.projects;
+      return this.projects.filter(p => p.tags.includes(this.portfolioFilter));
+    },
+
+    projects: [
+      { id:1, title:'Portail Bancaire Digital',     client:'ORABANK Togo',     color:'#0ea5e9', tags:['Web'],
+        desc:'Refonte UX du portail client avec intégration Mobile Money, design system, accessibilité WCAG AA. +35% connexions.',
+        image:'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&q=80&w=900' },
+      { id:2, title:'Super App Mobile Commerce',    client:'Marché de Lomé',   color:'#f97316', tags:['Mobile'],
+        desc:'Application React Native marketplace avec paiement Flooz/T-Money, livraison géolocalisée. +60% GMV.',
+        image:'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=900' },
+      { id:3, title:'Chatbot IA Multilingue',       client:'Togocom',          color:'#22c55e', tags:['IA'],
+        desc:'Assistant virtuel IA supportant français, éwé et kabiyè. 80% des requêtes client traitées automatiquement.',
+        image:'https://images.unsplash.com/photo-1551288049-bbbda536639a?auto=format&fit=crop&q=80&w=900' },
+      { id:4, title:'Audit Sécurité Infrastructure', client:'UTB Togo',         color:'#ef4444', tags:['Sécurité'],
+        desc:'Pentest complet + formation IT + mise en conformité UEMOA pour l\'infrastructure bancaire nationale.',
+        image:'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=900' },
+      { id:5, title:'Plateforme RH Digitale',       client:'GIZ Togo',         color:'#a855f7', tags:['Web','IA'],
+        desc:'Système RH avec workflow de validation, tableau de bord KPI et module de formation e-learning multilingue.',
+        image:'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80&w=900' },
+      { id:6, title:'Stratégie Transformation',     client:'BOAD',             color:'#06b6d4', tags:['Consulting'],
+        desc:'Accompagnement 12 mois : audit digital, feuille de route 2025-2028, formation 150 collaborateurs.',
+        image:'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=900' },
+    ],
+
+    plans: [
+      { id:'starter', name:'Starter',   desc:'Pour les startups et TPE',      monthlyPrice:'350 000 FCFA', yearlyPrice:'280 000 FCFA', featured:false,
+        features:['Site vitrine 5 pages','Design moderne & responsive','Hébergement 1 an inclus','Support email 5j/7','SEO de base','Google Analytics'] },
+      { id:'pro',     name:'Pro',        desc:'Pour les PME en croissance',    monthlyPrice:'850 000 FCFA', yearlyPrice:'680 000 FCFA', featured:true,
+        features:['Tout Starter +','Application web sur-mesure','Intégration Mobile Money','Support prioritaire 7j/7','CI/CD inclus','Formation équipe','Dashboard analytics'] },
+      { id:'scale',   name:'Entreprise', desc:'Grandes entreprises & banques', monthlyPrice:'Sur devis',    yearlyPrice:'Sur devis',    featured:false,
+        features:['Tout Pro +','Architecture microservices','IA & Automatisation','Audit sécurité annuel','SLA 99,9%','Chef de projet dédié','Support 24/7'] },
+    ],
+
+    testimonials: [
+      { quote:'ASINT a digitalisé notre service client en 3 mois. Leur compréhension du marché togolais est remarquable. Notre satisfaction client a bondi de 45%.', name:'Ayélé Kodzovi', role:'DGA', company:'Togocom', avatar:'👩', color:'#0ea5e9',
+        photo:'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=200&fit=crop&q=80' },
+      { quote:'Partenaire fiable depuis 4 ans. L\'équipe livre toujours en avance et comprend nos contraintes réglementaires UEMOA. Excellence technique reconnue.', name:'Koami Ahiafu', role:'DSI', company:'ORABANK Togo', avatar:'👨', color:'#f97316',
+        photo:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&q=80' },
+      { quote:'La refonte de notre portail par ASINT a réduit les appels support de 30%. Professionnalisme, créativité et vraie connaissance du terrain africain.', name:'Mawuli Houenou', role:'CDO', company:'UTB Togo', avatar:'👩', color:'#a855f7',
+        photo:'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=200&h=200&fit=crop&q=80' },
+    ],
+
+    faqs: [
+      { q:"Où est basée ASINT ?",               a:"ASINT est basée à Lomé, Togo, avec des équipes pouvant intervenir dans toute l'Afrique de l'Ouest. Nous travaillons aussi en remote pour des clients internationaux." },
+      { q:"Quels sont vos délais de livraison ?", a:"Un site vitrine : 3 à 4 semaines. Une application mobile : 2 à 4 mois. Un projet complexe (SaaS, IA) : 4 à 8 mois. Nous vous donnons un planning détaillé dès le cadrage." },
+      { q:"Intégrez-vous le Mobile Money ?",     a:"Oui, c'est l'une de nos spécialités. Nous intégrons Flooz (Moov), T-Money (Togocom), MTN MoMo, Orange Money et toutes les solutions de la zone UEMOA." },
+      { q:"Quel support proposez-vous après livraison ?", a:"Tous nos projets incluent 3 mois de garantie. Nous proposons ensuite des contrats de maintenance avec des SLA adaptés : Starter, Pro ou Enterprise 24/7." },
+      { q:"Développez-vous en langues africaines ?", a:"Oui. Nous développons des interfaces et chatbots IA supportant le français, l'éwé, le kabiyè, le mina et d'autres langues selon les besoins du projet." },
+      { q:"Comment fonctionne le paiement ?",    a:"Nous acceptons virements bancaires, Mobile Money (Flooz, T-Money, MoMo) et cartes bancaires. Paiement en 3 fois : 40% démarrage, 40% mi-parcours, 20% livraison." },
+    ],
+
+    articles: [
+      { id:1, emoji:'🤖', color:'#22c55e', category:'IA', date:'15 nov. 2024',
+        title:'Chatbots IA en Afrique : les enjeux des langues locales',
+        excerpt:'Comment intégrer l\'éwé, le kabiyè et le français dans les systèmes d\'IA conversationnelle pour le marché togolais.',
+        image:'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?auto=format&fit=crop&q=80&w=700' },
+      { id:2, emoji:'💳', color:'#f97316', category:'FinTech', date:'8 nov. 2024',
+        title:'Mobile Money & APIs : comment digitaliser votre caisse',
+        excerpt:'Guide pratique pour intégrer Flooz et T-Money dans votre application web ou mobile au Togo.',
+        image:'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&q=80&w=700' },
+      { id:3, emoji:'🔐', color:'#ef4444', category:'Cybersécurité', date:'1 nov. 2024',
+        title:'Cybersécurité des PME africaines : guide de démarrage',
+        excerpt:'Les 5 mesures prioritaires pour protéger votre système d\'information sans exploser votre budget.',
+        image:'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=700' },
+    ],
+
+    contactInfo: [
+      { icon:'📍', label:'Adresse',  value:'Bd du Mono, Tokoin, Lomé, Togo' },
+      { icon:'📧', label:'Email',    value:'contact@asint.tg' },
+      { icon:'📞', label:'Tél.',     value:'+228 90 00 00 00' },
+      { icon:'🕘', label:'Horaires', value:'Lun–Ven, 8h–18h (GMT)' },
+    ],
+
+    socials: [
+      { name:'LinkedIn', href:'#', svg:'<svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>' },
+      { name:'Facebook', href:'#', svg:'<svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>' },
+      { name:'Twitter',  href:'#', svg:'<svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 01-1.93.07 4.28 4.28 0 004 2.98 8.521 8.521 0 01-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"/></svg>' },
+      { name:'WhatsApp', href:'#', svg:'<svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>' },
+    ],
+
+    footerCols: [
+      { title:'Services',   links:[{href:'#services',label:'Dev Web & Mobile'},{href:'#services',label:'IA & Big Data'},{href:'#services',label:'Cybersécurité'},{href:'#services',label:'Cloud & Infra'},{href:'#services',label:'Formation'}] },
+      { title:'Ressources', links:[{href:'#blog',label:'Blog'},{href:'#portfolio',label:'Études de cas'},{href:'#',label:'Documentation'},{href:'#faq',label:'FAQ'}] },
+      { title:'Légal',      links:[{href:'#',label:'Mentions légales'},{href:'#',label:'Confidentialité'},{href:'#',label:'CGV'},{href:'#',label:'Cookies'}] },
+    ],
+
+    // ── Methods ──
+    init() {
+      setTimeout(() => { this.loading = false; this.initThreeJS(); this.initReveal(); }, 1400);
+      window.addEventListener('scroll', () => { this.scrolled = window.scrollY > 50; });
+      window.addEventListener('keydown', e => { if (e.key === 'Escape' && this.modal) { this.modal = null; document.body.style.overflow = ''; }});
+    },
+
+    openModal(type) { this.modal = type; document.body.style.overflow = 'hidden'; },
+
+    submitContact() {
+      this.contactForm.errors = {};
+      let valid = true;
+      if (!this.contactForm.firstName.trim()) { this.contactForm.errors.firstName = 'Champ requis'; valid = false; }
+      if (!this.contactForm.email.match(/^[^@]+@[^@]+\.[^@]+$/)) { this.contactForm.errors.email = 'Email invalide'; valid = false; }
+      if (this.contactForm.message.trim().length < 20) { this.contactForm.errors.message = 'Message trop court (min. 20 car.)'; valid = false; }
+      if (!valid) return;
+      this.contactForm.loading = true;
+      setTimeout(() => { this.contactForm.loading = false; this.contactForm.success = true; }, 1800);
+    },
+
+    initReveal() {
+      const io = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }});
+      }, { threshold: 0.1 });
+      document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    },
+
+    initThreeJS() {
+      const canvas = document.getElementById('hero-canvas');
+      if (!canvas || !window.THREE) return;
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.z = 28;
+
+      // TorusKnot – signature shape of the second version
+      const geo = new THREE.TorusKnotGeometry(10, 3, 120, 16);
+      const mat = new THREE.MeshBasicMaterial({ color: 0x0ea5e9, wireframe: true, transparent: true, opacity: 0.07 });
+      const mesh = new THREE.Mesh(geo, mat);
+      scene.add(mesh);
+
+      // Secondary shape – accent
+      const geo2 = new THREE.IcosahedronGeometry(5, 1);
+      const mat2 = new THREE.MeshBasicMaterial({ color: 0xf97316, wireframe: true, transparent: true, opacity: 0.04 });
+      const mesh2 = new THREE.Mesh(geo2, mat2);
+      mesh2.position.set(18, -8, -5);
+      scene.add(mesh2);
+
+      // Particles
+      const pGeo = new THREE.BufferGeometry();
+      const pCount = 1600;
+      const pos = new Float32Array(pCount * 3);
+      for (let i = 0; i < pCount; i++) {
+        pos[i*3]   = (Math.random() - 0.5) * 60;
+        pos[i*3+1] = (Math.random() - 0.5) * 60;
+        pos[i*3+2] = (Math.random() - 0.5) * 30;
+      }
+      pGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      const pMat = new THREE.PointsMaterial({ color: 0x0ea5e9, size: 0.06, transparent: true, opacity: 0.4 });
+      scene.add(new THREE.Points(pGeo, pMat));
+
+      let mX = 0, mY = 0;
+      document.addEventListener('mousemove', e => { mX = (e.clientX / window.innerWidth - 0.5); mY = (e.clientY / window.innerHeight - 0.5); });
+
+      const clock = new THREE.Clock();
+      (function animate() {
+        requestAnimationFrame(animate);
+        const t = clock.getElapsedTime();
+        mesh.rotation.x += 0.001;
+        mesh.rotation.y += 0.002;
+        mesh.rotation.z = t * 0.05 + mX * 0.3;
+        mesh2.rotation.x = -t * 0.15;
+        mesh2.rotation.y = t * 0.2;
+        camera.position.x += (mX * 3 - camera.position.x) * 0.025;
+        camera.position.y += (-mY * 3 - camera.position.y) * 0.025;
+        camera.lookAt(scene.position);
+        renderer.render(scene, camera);
+      })();
+
+      const resize = () => {
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+      };
+      window.addEventListener('resize', resize);
+      resize();
+    },
+  }
+}
+
+function testimonialCarousel() {
+  return {
+    current: 0,
+    testimonials: [1,2,3], // length proxy
+    next() { this.current = (this.current + 1) % 3; },
+    prev() { this.current = (this.current - 1 + 3) % 3; },
+    init() { setInterval(() => this.next(), 6500); }
+  }
+}
+</script>
+</body>
+</html>

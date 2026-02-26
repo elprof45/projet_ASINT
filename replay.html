@@ -1,0 +1,353 @@
+<!doctype html>
+
+<html class="dark" lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Bovann Challenge - Replays &amp; Best-Of</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#256af4",
+              "background-light": "#f5f6f8",
+              "background-dark": "#101622",
+            },
+            fontFamily: {
+              display: ["Be Vietnam Pro", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .glass {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .glass-dark {
+        background: rgba(16, 22, 34, 0.8);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+      }
+    </style>
+    <style>
+      body {
+        min-height: max(884px, 100dvh);
+      }
+    </style>
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col"
+  >
+    <!-- Top Header -->
+    <header
+      class="sticky top-0 z-50 glass-dark px-4 py-4 flex items-center justify-between"
+    >
+      <button
+        class="flex items-center justify-center p-2 rounded-lg hover:bg-white/5 transition-colors"
+      >
+        <span class="material-symbols-outlined text-slate-100">arrow_back</span>
+      </button>
+      <h1 class="text-lg font-bold tracking-tight text-slate-100">
+        Replays &amp; Best-Of
+      </h1>
+      <button
+        class="flex items-center justify-center p-2 rounded-lg hover:bg-white/5 transition-colors"
+      >
+        <span class="material-symbols-outlined text-slate-100">search</span>
+      </button>
+    </header>
+    <main class="flex-1 overflow-y-auto pb-24">
+      <!-- Hero Featured Section -->
+      <section class="px-4 pt-6">
+        <h2 class="text-2xl font-bold mb-4">Revivre les étapes</h2>
+        <div
+          class="relative aspect-video w-full rounded-xl overflow-hidden glass group cursor-pointer"
+        >
+          <img
+            alt="Dernier replay"
+            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            data-alt="Gaming tournament cinematic live stream shot"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUQnbScA-eSLvNLGFfjCC5WFms9RE1-iVuQuyo7HSEc0R0FWtYJ15H0cCZ5mY-glQMppNXJBuhOrDlfpF1U7LJiWesSyT8FPD11uRF9VbN3npI-xH9k2bKChEe1Cb-YYtyTyIKqYAoHg2T3-ACoV1HPa8CLeU8Ofrez66QXvEJtByRmKWogjIXrswLkVsaRVECpVG9y6DPvBAVvCLKs0VwTCl5SExF3lDkY99gZdySINcZNyXNDjlhIw-Zt5U9EtFfM5sF4NR1HcU"
+          />
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-transparent opacity-80"
+          ></div>
+          <!-- Play Button Overlay -->
+          <div class="absolute inset-0 flex items-center justify-center">
+            <div
+              class="bg-primary/90 p-4 rounded-full shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform"
+            >
+              <span class="material-symbols-outlined text-white text-4xl fill-1"
+                >play_arrow</span
+              >
+            </div>
+          </div>
+          <!-- Content Overlay -->
+          <div class="absolute bottom-0 left-0 p-4 w-full">
+            <div class="flex items-center gap-2 mb-1">
+              <span
+                class="bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider"
+                >Dernier Live</span
+              >
+              <span class="text-xs text-slate-300 flex items-center gap-1">
+                <span class="material-symbols-outlined text-xs"
+                  >visibility</span
+                >
+                12.4k
+              </span>
+            </div>
+            <h3 class="text-lg font-bold text-white">
+              Grande Finale - Bovann Challenge S3
+            </h3>
+            <p class="text-sm text-slate-300">Durée: 02:45:12 • 15 oct. 2023</p>
+          </div>
+        </div>
+      </section>
+      <!-- Category Selector -->
+      <section class="mt-8">
+        <div class="flex gap-3 px-4 overflow-x-auto no-scrollbar">
+          <button
+            class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-xl bg-primary px-6 text-white text-sm font-semibold transition-all"
+          >
+            Toutes
+          </button>
+          <button
+            class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-xl glass px-6 text-slate-300 text-sm font-medium hover:bg-white/5 transition-all"
+          >
+            Étape 1
+          </button>
+          <button
+            class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-xl glass px-6 text-slate-300 text-sm font-medium hover:bg-white/5 transition-all"
+          >
+            Étape 2
+          </button>
+          <button
+            class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-xl glass px-6 text-slate-300 text-sm font-medium hover:bg-white/5 transition-all"
+          >
+            Étape 3
+          </button>
+          <button
+            class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-xl glass px-6 text-slate-300 text-sm font-medium hover:bg-white/5 transition-all"
+          >
+            Étape Finale
+          </button>
+        </div>
+      </section>
+      <!-- Video Grid -->
+      <section class="px-4 mt-8">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-bold">Plus de vidéos</h3>
+          <span class="text-primary text-sm font-semibold cursor-pointer"
+            >Voir tout</span
+          >
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <!-- Video Item 1 -->
+          <div class="flex flex-col gap-2">
+            <div
+              class="relative aspect-square rounded-xl overflow-hidden glass group cursor-pointer"
+            >
+              <img
+                alt="Highlight 1"
+                class="w-full h-full object-cover"
+                data-alt="Gamer playing with neon lighting effects"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqBFgkzQ32hnhJUJ4we_jujC2q-Z2ebpkrGu6NzJ_2FKPTYaygyZgsbmlpYhLGJ1Vnf0jF4na5NN4fupDzXgugPfdE0MLSLSyk_-lbKY82356IwPry_jMBNxJx2vwBFBdmjf30klHTqZ8lX2EkPAvTzN7vNGyzo99ot1h-7SL2o_qtYLNeTqU93ljI4-xIKGYR4YhVRYkOl0VcH-Yna2a980qq_CP4R4-8SrBnpz8kisHkUyiaMT4dRjZXQa0jgLvITbe6SvrjR0g"
+              />
+              <div
+                class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors"
+              ></div>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <span
+                  class="material-symbols-outlined text-white text-3xl opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all"
+                  >play_circle</span
+                >
+              </div>
+              <div
+                class="absolute bottom-2 right-2 bg-black/60 backdrop-blur-md px-1.5 py-0.5 rounded text-[10px] text-white"
+              >
+                03:20
+              </div>
+            </div>
+            <p class="text-xs font-semibold leading-tight line-clamp-2">
+              Top 5 Plays - Semaine 1
+            </p>
+            <p class="text-[10px] text-slate-400">4.2k vues • Il y a 2j</p>
+          </div>
+          <!-- Video Item 2 -->
+          <div class="flex flex-col gap-2">
+            <div
+              class="relative aspect-square rounded-xl overflow-hidden glass group cursor-pointer"
+            >
+              <img
+                alt="Highlight 2"
+                class="w-full h-full object-cover"
+                data-alt="Abstract vibrant esports arena crowd lighting"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDN5SwyIgXGs0JFVK4pB-FzKn8rRUKqzKMNK4F0OFz3A2HXXRNmILNi-yAsT3NpeAmpTOdzfj8Dgq5HilreT2WFnW7-f6RbMGt8e3geoQxh25Pa55MTyX-CJwX1EkNh0yk9GIu4kNPWJDieFhzoZTVI4XzvLJXBLLI37dfuI2pkruUs3EDESI6GaJIjTyNY9B16ME1AGWXiCaH3Tqhq47tG0NILxWitxx7P6murBGeKsV8Drba8rhRHsIl1DaOZcD3WRptBR-L83g"
+              />
+              <div
+                class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors"
+              ></div>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <span
+                  class="material-symbols-outlined text-white text-3xl opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all"
+                  >play_circle</span
+                >
+              </div>
+              <div
+                class="absolute bottom-2 right-2 bg-black/60 backdrop-blur-md px-1.5 py-0.5 rounded text-[10px] text-white"
+              >
+                12:45
+              </div>
+            </div>
+            <p class="text-xs font-semibold leading-tight line-clamp-2">
+              Best moments Étape 2
+            </p>
+            <p class="text-[10px] text-slate-400">8.9k vues • Il y a 1 sem.</p>
+          </div>
+          <!-- Video Item 3 -->
+          <div class="flex flex-col gap-2">
+            <div
+              class="relative aspect-square rounded-xl overflow-hidden glass group cursor-pointer"
+            >
+              <img
+                alt="Highlight 3"
+                class="w-full h-full object-cover"
+                data-alt="Cinematic close up of gaming keyboard"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAZnKP2f1XUa6NbtW_xGuySMcgs94aPT_9NCWM7OeDw4WYYbt0ntXlnEzdjuE2lhIJbn-lUpAKAmvHaiXHpJvToYFlBw56377vt5sCxFAGV6NK86rR7C3OWCAEDGi8-9w42eugo3cQjtk4FKuTzzPNmfEYYifeq51Wk2TIgQRLyJWx2taDlo7jYas-qO8Y98OD_AjUHTiGkWiJUM0oMO_HnDtllvzepPlGwxiEqwfBxJOC_gMoqeGqqOjwqeGJrlvH0NSDpniyRPs"
+              />
+              <div
+                class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors"
+              ></div>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <span
+                  class="material-symbols-outlined text-white text-3xl opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all"
+                  >play_circle</span
+                >
+              </div>
+              <div
+                class="absolute bottom-2 right-2 bg-black/60 backdrop-blur-md px-1.5 py-0.5 rounded text-[10px] text-white"
+              >
+                05:12
+              </div>
+            </div>
+            <p class="text-xs font-semibold leading-tight line-clamp-2">
+              Interview Vainqueur Étape 1
+            </p>
+            <p class="text-[10px] text-slate-400">2.1k vues • Il y a 2 sem.</p>
+          </div>
+          <!-- Video Item 4 -->
+          <div class="flex flex-col gap-2">
+            <div
+              class="relative aspect-square rounded-xl overflow-hidden glass group cursor-pointer"
+            >
+              <img
+                alt="Highlight 4"
+                class="w-full h-full object-cover"
+                data-alt="Digital glow aesthetic pattern backdrop"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWFFAWrV9oHgyEfmGR7fxmxc3G4NSG8H2BxrvivZLqqZqiU6REoUlOku5uA1Vkxsuj5YdPoCokphLQQYTSnauaDG-21VqZGKlMGXdlvkYkPvreSYox2RplAkILPEn5XzGfxdqhfuRsJ3ecr05YbWHqsDNRFlMsMEF8c8mBNiQIE4MH-RaORVHAENfoc5ZBQAWa0PDlnDHxrlSiht7SzdA42M2x6336bPzOJBCyVAi_QG1f3qA5a86r8-mBvH9cCREk3-VFvJJNeAo"
+              />
+              <div
+                class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors"
+              ></div>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <span
+                  class="material-symbols-outlined text-white text-3xl opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all"
+                  >play_circle</span
+                >
+              </div>
+              <div
+                class="absolute bottom-2 right-2 bg-black/60 backdrop-blur-md px-1.5 py-0.5 rounded text-[10px] text-white"
+              >
+                08:50
+              </div>
+            </div>
+            <p class="text-xs font-semibold leading-tight line-clamp-2">
+              Fail compilation - Étape 2
+            </p>
+            <p class="text-[10px] text-slate-400">15k vues • Il y a 1 sem.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+    <!-- Bottom Navigation Bar -->
+    <nav
+      class="fixed bottom-0 left-0 right-0 z-[60] glass-dark border-t border-white/10 px-6 py-3 flex justify-between items-center safe-area-bottom"
+    >
+      <a
+        class="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-colors"
+        href="#"
+      >
+        <span class="material-symbols-outlined">home</span>
+        <span class="text-[10px] font-medium">Accueil</span>
+      </a>
+      <a
+        class="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-colors"
+        href="#"
+      >
+        <span class="material-symbols-outlined">trophy</span>
+        <span class="text-[10px] font-medium">Défis</span>
+      </a>
+      <a class="flex flex-col items-center gap-1 text-primary" href="#">
+        <span class="material-symbols-outlined fill-1">play_circle</span>
+        <span class="text-[10px] font-bold">Replays</span>
+      </a>
+      <a
+        class="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-colors"
+        href="#"
+      >
+        <span class="material-symbols-outlined">person</span>
+        <span class="text-[10px] font-medium">Profil</span>
+      </a>
+    </nav>
+    <style>
+      /* Custom scrollbar hiding */
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
+      /* Fill for material icons when active */
+      .fill-1 {
+        font-variation-settings:
+          "FILL" 1,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+
+      /* Safe area for mobile devices */
+      .safe-area-bottom {
+        padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+      }
+    </style>
+  </body>
+</html>
